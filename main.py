@@ -1,8 +1,8 @@
-import socket, sys, threading, os
-import struct
+import os
+import socket
+import subprocess
 import time
 from pathlib import Path
-import subprocess
 
 ip = 'Main301'
 port = 5005
