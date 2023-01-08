@@ -4,7 +4,7 @@ import subprocess
 import time
 from pathlib import Path
 
-ip = 'localhost'
+ip = 'Main301'
 port = 5005
 user_pc = 'K301-15'
 server = None
@@ -13,33 +13,22 @@ test_path = os.getcwd()
 
 
 def recv_timeout(the_socket, timeout=2):
-    # make socket non blocking
     the_socket.setblocking(0)
-
-    # total data partwise in an array
     total_data = []
     data = b''
-
-    # beginning time
     begin = time.time()
-    while 1:
-        # if you got some data, then break after timeout
+    while True:
         if total_data and time.time() - begin > timeout:
             break
-
-        # if you got no data at all, wait a little longer, twice the timeout
         elif time.time() - begin > timeout * 2:
             break
 
-        # recv something
         try:
             data = the_socket.recv(8192)
             if data:
                 total_data.append(data)
-                # change the beginning time for measurement
                 begin = time.time()
             else:
-                # sleep for sometime to indicate a gap
                 time.sleep(0.1)
         except:
             pass
@@ -60,7 +49,6 @@ def get_non_exist(name):
         i += 1
 
 
-# noinspection PyUnresolvedReferences
 def download_tests():
     global direct
     try:
