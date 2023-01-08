@@ -4,7 +4,7 @@ import subprocess
 import time
 from pathlib import Path
 
-ip = 'Main301'
+ip = 'localhost'
 port = 5005
 user_pc = 'K301-15'
 server = None
@@ -43,13 +43,13 @@ def recv_timeout(the_socket, timeout=2):
                 time.sleep(0.1)
         except:
             pass
-    toReturn = b''
+    to_return = b''
     for i in total_data:
-        toReturn += i
-    return toReturn
+        to_return += i
+    return to_return
 
 
-def GetNonExist(name):
+def get_non_exist(name):
     if not Path(test_path + '/' + name).is_file():
         return open(test_path + '/' + name, 'wb')
     i = 2
@@ -60,7 +60,9 @@ def GetNonExist(name):
         i += 1
 
 
-def DownloadTests():
+# noinspection PyUnresolvedReferences
+def download_tests():
+    global direct
     try:
         server.send(b'GETLIST\r\n')
         server.send(bytes(user_pc, 'utf-8') + b'\r\n')
@@ -75,12 +77,12 @@ def DownloadTests():
         server.send(b'QUIT\r\n')
         server.close()
         for direct in directories:
-            Connect()
+            connect()
             server.send(b'GETTEST\r\n')
             server.send(bytes(user_pc, 'utf-8') + b'\r\n')
             server.send(direct + b'\r\n')
             server.send(bytes(user_pc, 'utf-8') + b'\r\n')
-            file = GetNonExist(str(direct[direct.rfind(b'\\') + 1:], 'utf-8'))
+            file = get_non_exist(str(direct[direct.rfind(b'\\') + 1:], 'utf-8'))
             data = recv_timeout(server, 5)
             kol = data.find(b'\n', data.find(b'\n', data.find(b'\n', data.find(b'\n') + 1)) + 1) + 1
             file.write(data[kol:])
@@ -94,7 +96,7 @@ def DownloadTests():
         print(str(err))
 
 
-def Connect():
+def connect():
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((ip, port))
@@ -105,8 +107,8 @@ def Connect():
 
 
 def main():
-    Connect()
-    DownloadTests()
+    connect()
+    download_tests()
 
 
 main()
